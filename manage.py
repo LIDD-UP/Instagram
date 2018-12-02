@@ -4,6 +4,7 @@ from nowstagram import app, db
 from flask_script import Manager
 from sqlalchemy import or_,and_
 from nowstagram.models import User, Image, Comment
+from tools.sql_connect_tools import SQLConnectTools
 import random, unittest, tests
 import sys
 reload(sys)
@@ -15,6 +16,10 @@ manager = Manager(app)
 def get_image_url():
     return 'http://images.nowcoder.com/head/' + str(random.randint(0,1000)) +  'm.png'
 
+
+def get_image():
+    return '/image/276a1feef5f111e8988fb46d83f68db1.jpg'
+
 @manager.command
 def run_test():
     #init_database()
@@ -22,6 +27,29 @@ def run_test():
     db.create_all()
     tests = unittest.TestLoader().discover('./')
     unittest.TextTestRunner().run(tests)
+
+
+@manager.command
+def run_test2():
+    db.drop_all()
+    db.create_all()
+    sql_tools = SQLConnectTools()
+    usernames = sql_tools.get_username()
+    for i,username in enumerate(usernames):
+        print(i,username)
+        while(i<3):
+            db.session.add(User(username, str(123)))
+            for j in range(2):
+
+                location = '/image/{}.jpg'.format(j)
+                db.session.add(Image(location, i + 1))
+                for k in range(0, 1):
+                    db.session.add(Comment('This is a comment' + str(k), 1+10*i+j, i+1))
+        db.session.commit()
+
+
+
+
 
 @manager.command
 def init_database():
