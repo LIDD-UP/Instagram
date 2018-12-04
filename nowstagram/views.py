@@ -148,27 +148,60 @@ def reg():
 def alter():
     # request.args
     # request.form
-    # if request.method == 'post':
-    #     username = request.values.get('username').strip()
-    #     password = request.values.get('password').strip()
+    if request.method == 'post':
+        username = request.values.get('username').strip()
+        password = request.values.get('password').strip()
+
+        # if username == '' or password == '':
+        #     return redirect_with_msg('/alter/', u'用户名或密码不能为空', 'reglogin')
+        #
+        user = User.query.filter_by(username=username).first()
+        print(user.username)
+        # if user == None:
+        #     return redirect_with_msg('/alter/', u'用户名不存在', 'reglogin')
+
+        # 更多判断
+
+        salt = '.'.join(random.sample('01234567890abcdefghigABCDEFGHI', 10))
+        m = hashlib.md5()
+        m.update(password + salt)
+        password = m.hexdigest()
+        user.password = password
+        user.salt = salt
+        db.session.commit()
+        return redirect('/regloginpage/')
+
+    else:
+        return render_template('alter.html')
+
+
+@app.route('/alter1/',methods={'post', 'get'})
+def alter1():
+    # request.args
+    # request.form
+
+    username = request.values.get('username').strip()
+    password = request.values.get('password').strip()
+
+    # if username == '' or password == '':
+    #     return redirect_with_msg('/alter/', u'用户名或密码不能为空', 'reglogin')
     #
-    #     if username == '' or password == '':
-    #         return redirect_with_msg('/alter/', u'用户名或密码不能为空', 'reglogin')
-    #
-    #     user = User.query.filter_by(username=username).first()
-    #     if user == None:
-    #         return redirect_with_msg('/alter/', u'用户名不存在', 'reglogin')
-    #
-    #     # 更多判断
-    #
-    #     salt = '.'.join(random.sample('01234567890abcdefghigABCDEFGHI', 10))
-    #     m = hashlib.md5()
-    #     m.update(password + salt)
-    #     password = m.hexdigest()
-    #     user.password = password
-    #     db.session.commit()
-    # else:
-    return render_template('alter.html')
+    user = User.query.filter_by(username=username).first()
+    print(user.username)
+    # if user == None:
+    #     return redirect_with_msg('/alter/', u'用户名不存在', 'reglogin')
+
+    # 更多判断
+
+    salt = '.'.join(random.sample('01234567890abcdefghigABCDEFGHI', 10))
+    m = hashlib.md5()
+    m.update(password + salt)
+    password = m.hexdigest()
+    user.password = password
+    user.salt = salt
+    db.session.commit()
+    return redirect('/')
+
 
 
 

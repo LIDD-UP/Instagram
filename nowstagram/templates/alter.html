@@ -9,7 +9,7 @@
         </div>
         <div class="login-wrapper">
             <div class="login-box">
-                <form method="post" id="alterform">
+                <form method="post" id="regloginform">
                     <h2 class="login-hd">
                         {% if (msg | length) > 0 %}
                         <b>{{msg}}</b>
@@ -25,9 +25,7 @@
                     </div>
                     <input type="hidden" name="next" value="{{next}}"/>
                     <div class="btn-wrapper">
-                        <button class="btn-primary" onclick="form=document.getElementById('regloginform');form.action='/reg/';">注册</button>
-                        <button class="btn-primary" onclick="form=document.getElementById('regloginform');form.action='/login/';">登录</button>
-                        <button class="btn-primary" onclick="form=document.getElementById('regloginform');form.action='/alter/';">忘记密码</button>
+                        <button class="btn-primary" onclick="form=document.getElementById('regloginform');form.action='/alter1/';">确认修改</button>
                     </div>
 
                 </form>
