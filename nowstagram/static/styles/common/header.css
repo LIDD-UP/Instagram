@@ -25,6 +25,7 @@
 .web-menu {
     float: right;
     margin-top: 20px;
+
 }
 .profile-ico {
     background-image: url(../../images/img/icons.png);
@@ -38,3 +39,73 @@
     text-indent: 110%;
     white-space: nowrap;
 }
+
+
+.user-like {
+    background-image: url(../../images/img/icons.png);
+    background-repeat: no-repeat;
+    background-size: 352px 157px;
+    background-position: -80px -78px;
+    height: 24px;
+    width: 24px;
+    display: block;
+    overflow: hidden;
+    text-indent: 110%;
+    white-space: nowrap;
+}
+
+.user-friend {
+    background-image: url(../../images/img/icons.png);
+    background-repeat: no-repeat;
+    background-size: 352px 157px;
+    background-position: -80px -104px;
+    height: 24px;
+    width: 24px;
+    display: block;
+    overflow: hidden;
+    text-indent: 110%;
+    white-space: nowrap;
+
+}
+
+.user-settings {
+    background-image: url(../../images/img/icons.png);
+    background-repeat: no-repeat;
+    background-size: 352px 157px;
+    background-position: -107px -104px;
+    height: 24px;
+    width: 24px;
+    display: block;
+    overflow: hidden;
+    text-indent: 110%;
+    white-space: nowrap;
+}
+
+.user-search {
+    background-image: url(../../images/img/icons.png);
+    background-repeat: no-repeat;
+    background-size: 352px 157px;
+    background-position: -129px -104px;
+    height: 24px;
+    width: 24px;
+    display: block;
+    overflow: hidden;
+    text-indent: 110%;
+    white-space: nowrap;
+}
+
+.user-out{
+    background-image: url(../../images/img/icons.png);
+    background-repeat: no-repeat;
+    background-size: 352px 157px;
+    background-position: -128px -104px;
+    height: 24px;
+    width: 24px;
+    display: block;
+    overflow: hidden;
+    text-indent: 110%;
+    white-space: nowrap;
+}
+
+
+

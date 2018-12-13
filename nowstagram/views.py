@@ -32,6 +32,11 @@ def index_images(page, per_page):
     map['images'] = images
     return json.dumps(map)
 
+# 这个改动不行
+# @app.route('/')
+# def user():
+#     return render_template('user_login_new.html')
+
 @app.route('/')
 def index():
     images = Image.query.order_by(db.desc(Image.id)).limit(10).all()
@@ -258,3 +263,25 @@ def upload():
             db.session.commit()
 
     return redirect('/profile/%d' % current_user.id)
+
+
+# 新的页面
+# 喜欢页
+@app.route('/user_like_list_new/')
+@login_required
+def user_like_list_new():
+    pass
+
+
+# 关注页
+@app.route('/user_friend_list_new/')
+@login_required
+def user_friend_list_new():
+    pass
+
+
+# 设置页
+@app.route('/settings/')
+@login_required
+def settings():
+    pass
