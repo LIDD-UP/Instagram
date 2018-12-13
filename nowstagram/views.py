@@ -270,18 +270,27 @@ def upload():
 @app.route('/user_like_list_new/')
 @login_required
 def user_like_list_new():
-    pass
+    return render_template('user_like_list_new.html')
 
 
 # 关注页
 @app.route('/user_friend_list_new/')
 @login_required
 def user_friend_list_new():
-    pass
+    return render_template('user_friend_list_new.html')
 
 
 # 设置页
 @app.route('/settings/')
 @login_required
 def settings():
+    return render_template('user')
+
+
+# 搜索
+@app.route('/search/')
+@login_required
+def search():
     pass
+
+
