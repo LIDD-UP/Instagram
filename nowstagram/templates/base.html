@@ -28,7 +28,7 @@
                 {#                喜欢页#}
                     <div class="web-menu">
                         {% if current_user.is_authenticated %}
-                        <a class="user-like" href="/user_like_list_new/">喜欢</a>
+                        <a class="user-like" href="/user_like_list_new/{{current_user.id}}">喜欢</a>
                         {% else %}
                         <a class="user-like" href="/regloginpage/">登陆/注册</a>
                         {% endif %}
@@ -36,7 +36,7 @@
 {#                关注页#}
                     <div class="web-menu">
                             {% if current_user.is_authenticated %}
-                            <a class="user-friend" href="/user_friend_list_new/">关注</a>
+                            <a class="user-friend" href="/user_friend_list_new/{{current_user.id}}">关注</a>
                             {% else %}
                             <a class="user-friend" href="/regloginpage/">登陆/注册</a>
                             {% endif %}

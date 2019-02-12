@@ -3,7 +3,7 @@
 from nowstagram import app, db
 from flask_script import Manager
 from sqlalchemy import or_,and_
-from nowstagram.models import User, Image, Comment,Like
+from nowstagram.models import User, Image, Comment,Like,followers
 from tools.sql_connect_tools import SQLConnectTools
 import random, unittest, tests
 import sys
@@ -124,29 +124,68 @@ def init_database():
     print 11, image, image.user
 
 def test_follow():
-    u1 = User('bluesli8','123456')
-    u2 = User('bluesli00','123456 ')
-    db.session.add(u1)
-    db.session.add(u2)
-    db.session.commit()
-    assert u1.unfollow(u2) == None
-    u = u1.follow(u2)
-    db.session.add(u)
-    db.session.commit()
-    assert u1.follow(u2) == None
-    assert u1.is_following(u2)
-    assert u1.followed.count() == 1
-    assert u1.followed.first().username == 'bluesli'
-    assert u2.followers.count() == 1
-    assert u2.followers.first().username == 'bluesli2'
-    u = u1.unfollow(u2)
-    assert u != None
-    db.session.add(u)
-    db.session.commit()
-    assert u1.is_following(u2) == False
-    assert u1.followed.count() == 0
-    assert u2.followers.count() == 0
+    # u1 = User('bluesli8','123456')
+    # u2 = User('bluesli00','123456 ')
+    # db.session.add(u1)
+    # db.session.add(u2)
+    # db.session.commit()
+    # assert u1.unfollow(u2) == None
+    # u = u1.follow(u2)
+    # db.session.add(u)
+    # db.session.commit()
+    # assert u1.follow(u2) == None
+    # assert u1.is_following(u2)
+    # assert u1.followed.count() == 1
+    # assert u1.followed.first().username == 'bluesli'
+    # assert u2.followers.count() == 1
+    # assert u2.followers.first().username == 'bluesli2'
+    # u = u1.unfollow(u2)
+    # assert u != None
+    # db.session.add(u)
+    # db.session.commit()
+    # assert u1.is_following(u2) == False
+    # assert u1.followed.count() == 0
+    # assert u2.followers.count() == 0
+    pass
+
+
+
+def test_like():
+    # likes = Like.query.filter_by(user_id=1).all()
+    # # print(likes)
+    # # print(type(likes))
+    # images = []
+    # for like in likes:
+    #     image = Image.query.get(like.image_id)
+    #     images.append(image)
+    # # print(images)
+    # for image in images:
+    #     print('----------')
+    #     print(image.id)
+    # likes = Like.query.filter_by(image_id=1000, user_id=110).all()
+    # print(likes)
+    # db.session.delete(likes[0])
+    # db.session.commit()
+    pass
+
+
+def test_follows():
+    u1 = User.query.get(110)
+    u2 = User.query.get(90)
+    print(u1.is_following(u2))
+    # assert u1.is_following(u2) == False
+    # print(assert(1==1))
+
+    # sql_toos = SQLConnectTools()
+    # followers = sql_toos.get_follows(110)
+    # users = []
+    # for follower in followers:
+    #     user = User.query.get(follower)
+    #     users.append(user)
+    #     print(user.username)
 
 if __name__ == '__main__':
-    test_follow()
+    # test_follow()
     # manager.run()
+    # test_like()
+    test_follows()

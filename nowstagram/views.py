@@ -1,11 +1,14 @@
 # -*- encoding=UTF-8 -*-
 
 from nowstagram import app, db
-from models import Image, User, Comment
+from models import Image, User, Comment,Like,followers
 from flask import render_template, redirect, request, flash, get_flashed_messages, send_from_directory
 import random, hashlib, json, uuid, os
 from flask_login import login_user, logout_user, current_user, login_required
 from qiniusdk import qiniu_upload_file
+
+from tools.sql_connect_tools import SQLConnectTools
+
 
 
 @app.route('/index/images/<int:page>/<int:per_page>/')
@@ -237,13 +240,16 @@ def add_comment():
                        "username":comment.user.username,
                        "user_id":comment.user_id})
 
+
 def save_to_qiniu(file, file_name):
     return qiniu_upload_file(file, file_name)
+
 
 def save_to_local(file, file_name):
     save_dir = app.config['UPLOAD_DIR']
     file.save(os.path.join(save_dir, file_name))
     return '/image/' + file_name
+
 
 @app.route('/upload/', methods={"post"})
 @login_required
@@ -267,24 +273,70 @@ def upload():
 
 # 新的页面
 # 喜欢页
-@app.route('/user_like_list_new/')
+@app.route('/user_like_list_new/<int:user_id>/')
 @login_required
-def user_like_list_new():
-    return render_template('user_like_list_new.html')
+def user_like_list_new(user_id):
+    likes = Like.query.filter_by(user_id=user_id).all()
+    images = []
+    for like in likes:
+        image = Image.query.get(like.image_id)
+        images.append(image)
+
+    return render_template('user_like_list_new.html',images=images)
+
+
+@app.route('/like_or_no_like/<int:image_id>/<int:current_user_id>')
+@login_required
+def like_or_no_like(image_id,current_user_id):
+    likes = Like.query.filter_by(image_id=image_id,user_id=current_user_id).all()
+    if len(likes) !=0:
+        db.session.delete(likes[0])
+        db.session.commit()
+        return redirect('/')
+    else:
+        like = Like(image_id=image_id,user_id=current_user_id)
+        db.session.add(like)
+        db.session.commit()
+        return redirect('/')
+
+
+
 
 
 # 关注页
-@app.route('/user_friend_list_new/')
+@app.route('/user_friend_list_new/<int:user_id>/')
 @login_required
-def user_friend_list_new():
-    return render_template('user_friend_list_new.html')
+def user_friend_list_new(user_id):
+    sql_toos = SQLConnectTools()
+    followers = sql_toos.get_follows(110)
+    users = []
+    for follower in followers:
+        user = User.query.get(follower)
+        users.append(user)
+
+    return render_template('user_friend_list_new.html', users=users)
+
+
+# follow_friend
+@app.route('/follow_friend/<int:current_user_id>/<int:follow_user_id>')
+@login_required
+def follow_friend(current_user_id,follow_user_id):
+    current_user = User.query.get(current_user_id)
+    follow_user = User.query.get(follow_user_id)
+    if current_user.is_following(follow_user):
+        return redirect('/')
+    else:
+        u = current_user.follow(follow_user)
+        db.session.add(u)
+        db.session.commit()
+        return redirect('/')
 
 
 # 设置页
 @app.route('/settings/')
 @login_required
 def settings():
-    return render_template('user')
+    return render_template('user_settings.html')
 
 
 # 搜索

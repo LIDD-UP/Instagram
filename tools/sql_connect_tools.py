@@ -9,7 +9,7 @@ class SQLConnectTools(object):
             port=3306,
             user='root',
             passwd='123456',
-            db='test_flask',
+            db='test_flask4',
             charset='utf8',
         )
         self.cursor = self.connect.cursor()
@@ -61,8 +61,25 @@ class SQLConnectTools(object):
         self.connect.commit()
         return result
 
+    def get_follows(self,user_id):
+        sql = '''
+        SELECT followed_id
+        FROM followers
+        WHERE follower_id={}
+        '''.format(user_id)
+        self.cursor.execute(sql)
+        followed_ids = []
+        results = self.cursor.fetchall()
+        for result in results:
+            # print(result[0])
+            followed_ids.append(result[0])
+        self.connect.commit()
+        return followed_ids
+
+
 
 
 if __name__ == '__main__':
     sql_tools = SQLConnectTools()
-    sql_tools.get_user_id()
+    ids = sql_tools.get_follows(110)
+    print(ids)
