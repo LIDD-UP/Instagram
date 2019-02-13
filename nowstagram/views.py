@@ -58,6 +58,13 @@ def image(image_id):
     return render_template('pageDetail.html', image=image, comments=comments)
 
 
+@app.route('/reply/',methods={'post', 'get'})
+@login_required
+def reply():
+
+
+
+
 @app.route('/profile/<int:user_id>/')
 @login_required
 def profile(user_id):

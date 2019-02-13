@@ -53,6 +53,12 @@
                     <span>
                         <span>{{comment.content}}</span>
                     </span>
+                    <form action="/reply/" method="post">
+                        <input type="hidden" name="commentid" value={{ comment.id }}/>
+                        <input type="text" name="reply" value="">
+                        <input type="submit" value="回复">
+                    </form>
+
                 </li>
                 {% endfor %}
             </ul>
