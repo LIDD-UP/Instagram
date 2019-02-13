@@ -76,6 +76,15 @@ class SQLConnectTools(object):
         self.connect.commit()
         return followed_ids
 
+    def un_follow(self,current_user_id,unfollowed_user_id):
+        sql_str = '''
+            delete from followers
+            WHERE follower_id={0} and followed_id={1}
+        '''.format(current_user_id,unfollowed_user_id)
+        self.cursor.execute(sql_str)
+        self.connect.commit()
+
+
 
 
 

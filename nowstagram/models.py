@@ -55,6 +55,7 @@ class User(db.Model):
     # email = db.Column(db.String(80))
     password = db.Column(db.String(32))
     salt = db.Column(db.String(32))
+    verify_code = db.Column(db.String(32))
     # my_url = ''
     head_url = db.Column(db.String(256))
     images = db.relationship('Image', backref='user', lazy='dynamic')

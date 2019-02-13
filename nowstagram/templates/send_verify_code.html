@@ -21,11 +21,11 @@
                         <input class="input-txt"  aria-label="用户名" aria-required="true" autocapitalize="off" autocorrect="off" maxlength="30" name="username" placeholder="用户名" value="" type="text" data-reactid=".0.1.0.1.0.1.0.5.0">
                     </div>
                     <div class="form-item">
-                        <input class="input-txt" aria-describedby="" aria-label="密码" aria-required="true" autocapitalize="off" autocorrect="off" name="password" placeholder="密码" type="password" value="" data-reactid=".0.1.0.1.0.1.0.6.0">
+                        <input class="input-txt" aria-describedby="" aria-label="密码" aria-required="true" autocapitalize="off" autocorrect="off" name="email" placeholder="邮箱" type="text" value="" data-reactid=".0.1.0.1.0.1.0.6.0">
                     </div>
                     <input type="hidden" name="next" value="{{next}}"/>
                     <div class="btn-wrapper">
-                        <button class="btn-primary" onclick="form=document.getElementById('regloginform');form.action='/search2/';">确认修改</button>
+                        <button class="btn-primary" onclick="form=document.getElementById('regloginform');form.action='/send_verify_code2/';">发送</button>
                     </div>
 
                 </form>

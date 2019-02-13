@@ -1,5 +1,7 @@
 # -*- encoding=UTF-8 -*-
 
+import re
+import random
 from nowstagram import app, db
 from models import Image, User, Comment,Like,followers
 from flask import render_template, redirect, request, flash, get_flashed_messages, send_from_directory
@@ -152,35 +154,62 @@ def reg():
     return redirect('/')
 
 
+@app.route('/send_verify_code/',methods={'post', 'get'})
+def send_verify_code():
+    msg = ''
+    for m in get_flashed_messages(with_categories=False, category_filter=['code']):
+        msg = msg + m
+    return render_template('send_verify_code.html', msg=msg, next=request.values.get('next'))
+
+
+def send_email(receivers,content):
+    import smtplib
+    from email.mime.text import MIMEText
+    message = MIMEText(content, 'plain', 'utf-8')
+    message['From'] = '1807103336@qq.com'
+    message['To'] = ",".join(receivers)
+    message['Subject'] = '验证码'
+    try:
+        smtp_obj = smtplib.SMTP_SSL('smtp.qq.com', 465)
+        smtp_obj.login('1807103336@qq.com', 'cjeqswjwskhxdgga')
+        smtp_obj.sendmail('1807103336@qq.com', receivers, message.as_string())
+        print("mail has been send successfully.")
+    except smtplib.SMTPException as e:
+        print e
+
+
+@app.route('/send_verify_code2/',methods={'post', 'get'})
+def send_verify_code2():
+    username = request.values.get('username').strip()
+    email = request.values.get('email').strip()
+    if email == '' or len(re.findall(r'@', email)) == 0 or username == '':
+        return redirect_with_msg('/send_verify_code/', u'邮箱或者用户名不和法', 'code')
+    user = User.query.filter_by(username=username).first()
+    if user == None:
+        return redirect_with_msg('/send_verify_code/', u'用户不存在', 'code')
+    verify_code = ''
+    for i in range(4):
+        verify_code = verify_code+ str(random.choice([1,2,3,4,5,6,7,8,9,0]))
+
+    user.verify_code = verify_code
+    db.session.commit()
+
+    send_email(email,verify_code)
+    return redirect('/alter/')
+
+
+
+
+
+
+
 @app.route('/alter/',methods={'post', 'get'})
 def alter():
-    # request.args
-    # request.form
-    if request.method == 'post':
-        username = request.values.get('username').strip()
-        password = request.values.get('password').strip()
+    msg = ''
+    for m in get_flashed_messages(with_categories=False, category_filter=['alter']):
+        msg = msg + m
+    return render_template('alter.html', msg=msg, next=request.values.get('next'))
 
-        # if username == '' or password == '':
-        #     return redirect_with_msg('/alter/', u'用户名或密码不能为空', 'reglogin')
-        #
-        user = User.query.filter_by(username=username).first()
-        print(user.username)
-        # if user == None:
-        #     return redirect_with_msg('/alter/', u'用户名不存在', 'reglogin')
-
-        # 更多判断
-
-        salt = '.'.join(random.sample('01234567890abcdefghigABCDEFGHI', 10))
-        m = hashlib.md5()
-        m.update(password + salt)
-        password = m.hexdigest()
-        user.password = password
-        user.salt = salt
-        db.session.commit()
-        return redirect('/regloginpage/')
-
-    else:
-        return render_template('alter.html')
 
 
 @app.route('/alter1/',methods={'post', 'get'})
@@ -190,27 +219,30 @@ def alter1():
 
     username = request.values.get('username').strip()
     password = request.values.get('password').strip()
+    code = request.values.get('code').strip()
 
-    # if username == '' or password == '':
-    #     return redirect_with_msg('/alter/', u'用户名或密码不能为空', 'reglogin')
-    #
+    if username == '' or password == '' or code == '':
+        return redirect_with_msg('/alter/', u'用户名或密码或者验证码不能为空', 'alter')
+
     user = User.query.filter_by(username=username).first()
     print(user.username)
-    # if user == None:
-    #     return redirect_with_msg('/alter/', u'用户名不存在', 'reglogin')
+    if user == None:
+        return redirect_with_msg('/alter/', u'用户名不存在', 'alter')
+    if user.verify_code==code:
+        salt = '.'.join(random.sample('01234567890abcdefghigABCDEFGHI', 10))
+        m = hashlib.md5()
+        m.update(password + salt)
+        password = m.hexdigest()
+        user.password = password
+        user.salt = salt
+        db.session.commit()
+        return redirect('/regloginpage/')
+    else:
+        return redirect_with_msg('/alter/', u'验证码不正确', 'alter')
 
-    # 更多判断
 
-    salt = '.'.join(random.sample('01234567890abcdefghigABCDEFGHI', 10))
-    m = hashlib.md5()
-    m.update(password + salt)
-    password = m.hexdigest()
-    user.password = password
-    user.salt = salt
-    db.session.commit()
+
     return redirect('/')
-
-
 
 
 
@@ -308,7 +340,7 @@ def like_or_no_like(image_id,current_user_id):
 @login_required
 def user_friend_list_new(user_id):
     sql_toos = SQLConnectTools()
-    followers = sql_toos.get_follows(110)
+    followers = sql_toos.get_follows(user_id)
     users = []
     for follower in followers:
         user = User.query.get(follower)
@@ -324,6 +356,8 @@ def follow_friend(current_user_id,follow_user_id):
     current_user = User.query.get(current_user_id)
     follow_user = User.query.get(follow_user_id)
     if current_user.is_following(follow_user):
+        sql_toos = SQLConnectTools()
+        sql_toos.un_follow(current_user_id,follow_user_id)
         return redirect('/')
     else:
         u = current_user.follow(follow_user)
@@ -332,8 +366,12 @@ def follow_friend(current_user_id,follow_user_id):
         return redirect('/')
 
 
+
+
+
+
 # 设置页
-@app.route('/settings/')
+@app.route('/settings/',methods={'post', 'get'})
 @login_required
 def settings():
     # request.args
@@ -363,6 +401,34 @@ def settings():
 
     else:
         return render_template('user_settings.html')
+
+
+# 设置页
+@app.route('/settings2/',methods={'post', 'get'})
+@login_required
+def settings2():
+    username = request.values.get('username').strip()
+    password = request.values.get('password').strip()
+
+    # if username == '' or password == '':
+    #     return redirect_with_msg('/alter/', u'用户名或密码不能为空', 'reglogin')
+    #
+    user = User.query.filter_by(username=username).first()
+    print(user.username)
+    # if user == None:
+    #     return redirect_with_msg('/alter/', u'用户名不存在', 'reglogin')
+
+    # 更多判断
+
+    salt = '.'.join(random.sample('01234567890abcdefghigABCDEFGHI', 10))
+    m = hashlib.md5()
+    m.update(password + salt)
+    password = m.hexdigest()
+    user.password = password
+    user.salt = salt
+    db.session.commit()
+    return redirect('/regloginpage/')
+
 
 
 # 搜索
@@ -397,5 +463,17 @@ def search():
 
     else:
         return render_template('search_input.html')
+
+
+@app.route('/search2/',methods={'post', 'get'})
+@login_required
+def search2():
+    username = request.values.get('username').strip()
+    password = request.values.get('password').strip()
+
+    users = User.query.filter_by(username=username)
+    return render_template('user_search.html',users=users)
+
+
 
 
