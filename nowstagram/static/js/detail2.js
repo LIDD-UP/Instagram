@@ -8,12 +8,12 @@ $(function () {
     function fInitialize() {
         var that = this;
         var sImageId = window.imageId;
-        var oCmtIpt = $('#jsC');
+        var oCmtIpt = $('#jsCmt');
         var oListDv = $('ul.js-discuss-list');
 
         // 点击添加评论
         var bSubmit = false;
-        $('#jsS').on('click', function () {
+        $('#jsSubmit').on('click', function () {
             var sCmt = $.trim(oCmtIpt.val());
             // 评论为空不能提交
             if (!sCmt) {

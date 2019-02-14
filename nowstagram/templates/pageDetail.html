@@ -53,15 +53,26 @@
                     <span>
                         <span>{{comment.content}}</span>
                     </span>
+
+                        {% for reply in replys%}
+                            {% if reply.comment_id==comment.id %}
+                            <span>{{reply.content}}
+                            </span>
+                            {% endif %}
+                        {% endfor %}
+
                     <form action="/reply/" method="post">
                         <input type="hidden" name="commentid" value={{ comment.id }}/>
-                        <input type="text" name="reply" value="">
-                        <input type="submit" value="回复">
+                        &nbsp&nbsp&nbsp&nbsp<input type="text" name="content" value="">
+                        <input type="submit" value="评论">
                     </form>
+                    </span>
+
 
                 </li>
                 {% endfor %}
             </ul>
+
             <section class="discuss-edit">
                 <a class="icon-heart-empty"></a>
                 <input placeholder="添加评论..." id="jsCmt" type="text">

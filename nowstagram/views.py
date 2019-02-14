@@ -3,7 +3,7 @@
 import re
 import random
 from nowstagram import app, db
-from models import Image, User, Comment,Like,followers
+from models import Image, User, Comment,Like,followers,Reply
 from flask import render_template, redirect, request, flash, get_flashed_messages, send_from_directory
 import random, hashlib, json, uuid, os
 from flask_login import login_user, logout_user, current_user, login_required
@@ -55,12 +55,20 @@ def image(image_id):
     if image == None:
         return redirect('/')
     comments = Comment.query.filter_by(image_id=image_id).order_by(db.desc(Comment.id)).limit(20).all()
-    return render_template('pageDetail.html', image=image, comments=comments)
+    replys =[]
+    for comment in comments:
+        single_comment_replys = Reply.query.filter_by(comment_id=comment.id).all()
+        for single_comment_reply in single_comment_replys:
+            replys.append(single_comment_reply)
+
+    return render_template('pageDetail.html', image=image, comments=comments,replys=replys)
 
 
 @app.route('/reply/',methods={'post', 'get'})
 @login_required
 def reply():
+
+    return yes
 
 
 
