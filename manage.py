@@ -3,7 +3,7 @@
 from nowstagram import app, db
 from flask_script import Manager
 from sqlalchemy import or_,and_
-from nowstagram.models import User, Image, Comment,Like,followers
+from nowstagram.models import User, Image, Comment,Like,followers,Reply
 from tools.sql_connect_tools import SQLConnectTools
 import random, unittest, tests
 import sys
@@ -184,8 +184,21 @@ def test_follows():
     #     users.append(user)
     #     print(user.username)
 
+
+def test_reply():
+    reply = Reply(comment_id=3001, content='test1')
+    db.session.add(reply)
+    db.session.commit()
+
+
+def test_comment():
+    comment = Comment.query.filter_by(id=3001).first()
+    print(comment.image_id)
+
+
 if __name__ == '__main__':
     # test_follow()
-    manager.run()
+    # manager.run()
     # test_like()
     # test_follows()
+    test_comment()

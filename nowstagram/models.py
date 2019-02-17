@@ -150,14 +150,10 @@ class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.String(1024))
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    status = db.Column(db.Integer, default=0) # 0 正常 1 被删除
-    user = db.relationship('User')
 
-    def __init__(self, content, comment_id, user_id):
+    def __init__(self, content, comment_id):
         self.content = content
         self.comment_id = comment_id
-        self.user_id = user_id
 
 
 

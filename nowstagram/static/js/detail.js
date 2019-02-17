@@ -8,12 +8,12 @@ $(function () {
     function fInitialize() {
         var that = this;
         var sImageId = window.imageId;
-        var oCmtIpt = $('#jsC');
+        var oCmtIpt = $('#jsCmt');
         var oListDv = $('ul.js-discuss-list');
 
         // 点击添加评论
         var bSubmit = false;
-        $('#jsS').on('click', function () {
+        $('#jsSubmit').on('click', function () {
             var sCmt = $.trim(oCmtIpt.val());
             // 评论为空不能提交
             if (!sCmt) {
@@ -40,6 +40,11 @@ $(function () {
                     '<li>',
                         '<a class="_4zhc5 _iqaka" title="', that.encode(oResult.username), '" href="/profile/', oResult.user_id, '">', that.encode(oResult.username), '</a> ',
                         '<span><span>', that.encode(sCmt), '</span></span>',
+                        '                    <form action="/reply/" method="post">\n' +
+                        '                        <input type="hidden" name="commentid" value="',oResult.id,'"/>\n' +
+                        '                        &nbsp&nbsp&nbsp&nbsp<input type="text" name="content" value="">\n' +
+                        '                        <input type="submit" value="评论">',
+
                     '</li>'].join('');
                 oListDv.prepend(sHtml);
             }).fail(function (oResult) {

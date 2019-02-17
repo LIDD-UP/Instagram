@@ -67,8 +67,16 @@ def image(image_id):
 @app.route('/reply/',methods={'post', 'get'})
 @login_required
 def reply():
-
-    return yes
+    comment_id = request.values['commentid']
+    comment_id = int(comment_id.replace('/',''))
+    content = request.values['content']
+    # new_content = str(comment_id)+content
+    reply = Reply(comment_id=comment_id, content=content)
+    db.session.add(reply)
+    db.session.commit()
+    comment = Comment.query.filter_by(id=comment_id).first()
+    image_id = comment.image_id
+    return redirect('/image/{}/'.format(image_id))
 
 
 
