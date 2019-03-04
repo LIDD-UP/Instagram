@@ -156,4 +156,26 @@ class Reply(db.Model):
         self.comment_id = comment_id
 
 
+class Admin(db.Model):
+    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(80), unique=True)
+    password = db.Column(db.String(32))
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
+
+
 

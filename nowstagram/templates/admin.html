@@ -3,6 +3,7 @@
 {% block css %}/static/styles/pages/index.css{% endblock%}
 {% block content %}
 <div class="page-main clearfix">
+
     {% for image in images%}
     <article class="mod">
         <header class="mod-hd">
@@ -18,6 +19,10 @@
             <div class="profile-info">
                 <a title="{{image.user.username}}" href="/follow_friend/{{ current_user.id }}/{{image.user.id}}">关注</a>
             </div>
+            <div class="profile-info">
+                <a title="{{image.user.username}}" href="/delete_image/{{ image.id }}/{{ next_page }}/">删除</a>
+            </div>
+
         </header>
         <div class="mod-bd">
             <div class="img-box">
@@ -80,9 +85,10 @@
             </section>
         </div>
     </article>
-    {% endfor %}
+{% endfor %}
     <div class="more-discuss">
-    <a  href="/">下一页</a>
+    <a  href="/admin/{{ next_page}}/">下一页</a>
 </div>
 </div>
+
 {% endblock%}

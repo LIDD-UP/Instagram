@@ -3,7 +3,7 @@
 import re
 import random
 from nowstagram import app, db
-from models import Image, User, Comment,Like,followers,Reply
+from models import Image, User, Comment,Like,followers,Reply,Admin
 from flask import render_template, redirect, request, flash, get_flashed_messages, send_from_directory
 import random, hashlib, json, uuid, os
 from flask_login import login_user, logout_user, current_user, login_required
@@ -44,8 +44,10 @@ def index_images(page, per_page):
 
 @app.route('/')
 def index():
-    images = Image.query.order_by(db.desc(Image.id)).limit(10).all()
-    return render_template('index.html', images=images)
+    import random
+    page = random.choice([1,2,3,4,5,6,7,8,9,10,11,12,14])
+    images = Image.query.order_by(db.desc(Image.id)).paginate(page=page, per_page=10, error_out=False)
+    return render_template('index.html', images=images.items)
 
 
 @app.route('/image/<int:image_id>/')
@@ -484,5 +486,31 @@ def search2():
     return render_template('user_search.html',users=users)
 
 
+@app.route('/admin_login/',methods={'post', 'get'})
+def admin_login():
+    print(request.method)
+    if request.method == 'GET':
+        return render_template('admin_login.html')
+    if request.method == 'POST':
+        username = request.values.get('username').strip()
+        password = request.values.get('password').strip()
+        admin = Admin.query.filter_by(username=username).first()
+        if admin.password == password:
+            return redirect('/admin/1')
+
+
+
+@app.route('/admin/<int:page>/',methods={'post', 'get'})
+def admin(page):
+    images = Image.query.order_by(db.desc(Image.id)).paginate(page=page, per_page=10, error_out=False)
+    return render_template('admin.html',images=images.items, next_page=page+1)
+
+
+@app.route('/delete_image/<int:image_id>/<int:page>/',methods={'post', 'get'})
+def delete_image(image_id, page):
+    image = Image.query.filter_by(id=image_id).first()
+    db.session.delete(image)
+    db.session.commit()
+    return redirect('/admin/{}'.format(page-1))
 
 

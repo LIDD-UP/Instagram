@@ -198,7 +198,7 @@ def test_comment():
 
 if __name__ == '__main__':
     # test_follow()
-    # manager.run()
+    manager.run()
     # test_like()
     # test_follows()
-    test_comment()
+    # test_comment()
